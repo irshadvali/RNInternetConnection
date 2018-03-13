@@ -1,27 +1,28 @@
 import {
-    Platform,
-    StyleSheet,
-    Text,
-    View,
-    NetInfo
-  } from 'react-native';
- 
-export function  HelloIrshad() {
-   
-    NetInfo.isConnected.fetch().then(isConnected => {
-        // console.log('First, is ' + (isConnected ?isConnection='online' : 'offline'));
-      });
-      function handleFirstConnectivityChange(isConnected) {
-        console.log(isConnected)
-        // console.log('Then, is ' + (isConnected ? isConnection='online' : 'offline'));
-        NetInfo.isConnected.removeEventListener(
-          'connectionChange',
-          handleFirstConnectivityChange
-        );
-      }
+  Platform,
+  NetInfo
+} from "react-native";
+
+export async function isInternetConnected(cb) {
+  if (Platform.OS === "ios") {
+    function handleFirstConnectivityChange(isConnected) {
+      cb(isConnected);
+    }
+    await NetInfo.isConnected.fetch().then().done(isConnected => {
       NetInfo.isConnected.addEventListener(
-        'connectionChange',
+        "connectionChange",
         handleFirstConnectivityChange
       );
- 
+      console.log(isConnected);
+    });
+
+  } 
+  else {
+    await NetInfo.isConnected.fetch().then(isConnected => {
+      cb(isConnected);
+    });
+
+  }
+
+
 }
